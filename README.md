@@ -58,7 +58,7 @@ Agora vamos utilizar esse pacote no nosso projeto; por enquanto abre o arquivo
 
 `import 'package:geolocator/geolocator.dart';`
 
-Então, dentro da classe `_LoadingScreenState`, crie um método `void getLocation()`, 
+Então, dentro da classe `_LoadingScreenState`, crie um método `void getLocation()`,
 que conterá a linha informada pela documentação, para obtermos a localização atual do dispositivo:
 
 ```dart
@@ -80,12 +80,12 @@ Então, altere a assinatura de getLocation: `Future<void> getLocation() async {`
 Depois disso, podemos inserir uma linha para imprimir a posição, para efeito de teste. Logo abaixo
 da linha `Position position ....`, adicione a linha `print(position)`.
 
-Por fim, necessitamos pedir autorização ao dispositivo para usarmos o GPS. Para isso, precisamos seguir a 
+Por fim, necessitamos pedir autorização ao dispositivo para usarmos o GPS. Para isso, precisamos seguir a
 documentação da biblioteca. Vamos precisar alterar a configuração em dois arquivos XML.
 * Android:
   * Abra o arquivo no caminho `android/app/src/main/AndroidManifest.xml`.
   * Logo abaixo da linha: `<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.example.tempo_template">`, adicione a linha:
-  
+
   `<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />`
   * Aqui informamos ao android que nosso aplicativo utilizará a permissão de localização "grosseira" (ao contrário da fina, para, por exemplo, o waze)
 * iOS:
@@ -93,7 +93,7 @@ documentação da biblioteca. Vamos precisar alterar a configuração em dois ar
   * Logo abaixo de `<dict>` adicione as linhas:
 ```xml
   <key>NSLocationWhenInUseUsageDescription</key>
-  <string>This app needs access to location when open.</string>
+<string>This app needs access to location when open.</string>
 ```
 
 Após essa alteração, vamos criar uma nova função no código de `loading_screen.dart`. Essa função deve ser criada
@@ -101,27 +101,27 @@ logo acima da função `getLocation` que acabamos de criar:
 
 ```dart
   Future<void> checkLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
+  bool serviceEnabled;
+  LocationPermission permission;
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // serviço de localização desabilitado. Não será possível continuar
-      return Future.error('O serviço de localização está desabilitado.');
-    }
-    permission = await Geolocator.checkPermission();
+  serviceEnabled = await Geolocator.isLocationServiceEnabled();
+  if (!serviceEnabled) {
+    // serviço de localização desabilitado. Não será possível continuar
+    return Future.error('O serviço de localização está desabilitado.');
+  }
+  permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Sem permissão para acessar a localização
-        return Future.error('Sem permissão para acesso à localização');
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      // permissões negadas para sempre
-      return Future.error('A permissão para acesso a localização foi negada para sempre. Não é possível pedir permissão.');
+      // Sem permissão para acessar a localização
+      return Future.error('Sem permissão para acesso à localização');
     }
   }
+  if (permission == LocationPermission.deniedForever) {
+    // permissões negadas para sempre
+    return Future.error('A permissão para acesso a localização foi negada para sempre. Não é possível pedir permissão.');
+  }
+}
 
 ```
 
@@ -131,23 +131,23 @@ nova função: `await checkLocationPermission();`.
 No fim, a função `getLocation` ficará assim:
 ```dart
 Future<void> getLocation() async {
-    // Verificando permissão de acesso
-    await checkLocationPermission();
+  // Verificando permissão de acesso
+  await checkLocationPermission();
 
-    // agora podemos pedir a localização atual!
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-    print(position);
-  }
+  // agora podemos pedir a localização atual!
+  Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+  print(position);
+}
 ```
 
 Execute seu código no emulador. Pressione o botão azul, note que o android solicitará permissão de localização.
 Depois, observe a janela de console, Você verá impressa uma latitude e longitude. Esses valores
-são configuráveis no emulador. 
+são configuráveis no emulador.
 
 Você pode clicar nos "três pontos" sobre a janela do emulador.
 
 
-Uma nova janela aparecerá. Na aba Location, você verá um mapa. Pode 
+Uma nova janela aparecerá. Na aba Location, você verá um mapa. Pode
 navegar com o mouse pelo mapa e selecionar uma localização clicando duas vezes sobre o ponto.
 
 
@@ -198,10 +198,10 @@ Crie esse método logo acima do método `build`:
 
 ```dart
 @override
-  void initState() {
-    super.initState();
-    getLocation();
-  }
+void initState() {
+  super.initState();
+  getLocation();
+}
 ```
 
 Experimente recarregar seu programa. Agora, sem que você pressione qualquer coisa, a posição será recebida.
@@ -213,7 +213,7 @@ de serviço do "desenho" de tela.
 
 #### Desafio
 
-Refatore o código do aplicativo de forma que a lógica de obter a localização atual seja 
+Refatore o código do aplicativo de forma que a lógica de obter a localização atual seja
 manejada por um objeto `Location`.
 
 * Crie uma classe `Location` no arquivo `lib/services/location.dart`;
@@ -266,19 +266,19 @@ Para chamar o método, adicione a linha `getData()` ao método `build` da classe
 
 Para fazer o parse dos dados JSON que recebemos, vamos usar o
 pacote `dart:convert`. Para isso, no início do arquivo, importe-o:
-`import 'package:dart:convert`. Esta biblioteca nos fornece o 
+`import 'package:dart:convert`. Esta biblioteca nos fornece o
 método `jsonDecode`. Na linha abaixo de `var data = response.body;`,
 acrescente: `var jsonData = jsonDecode(data);`.
 
-Agora `jsonData` corresponde a uma estrutura do tipo 
+Agora `jsonData` corresponde a uma estrutura do tipo
 [Map](https://api.flutter.dev/flutter/dart-core/Map-class.html).
 Basicamente um `Map` é uma coleção de pares chave-valor, de modo
 que podemos recuperar um valor com sua chave. No nosso caso,
 as chaves serão as chaves do json (coord, lon, lat, weather, id, etc...)
-e os valores, seus valores correspondentes. 
+e os valores, seus valores correspondentes.
 
 A sintaxe para acessarnmos um valor dentro de um `Map` é:
-`mapa['chave']`. Essa chamada nos traz o valor na chave `chave`, 
+`mapa['chave']`. Essa chamada nos traz o valor na chave `chave`,
 dentro de `mapa`. No nosso caso, o mapa está na variável `jsonData`.
 As chaves são as diversas chaves do json. Devemos olhar com atenção
 para o json gerado. Você pode usar um [Json Beautifier](https://codebeautify.org/jsonviewer)
@@ -318,10 +318,10 @@ Os caminhos (*path*) para os valores que queremos obter são os seguintes:
 * Temperatura: `main.temp`
 * Id da condição do tempo: `weather[0].id`
 
-No caso da cidade, o campo `name` é um *filho direto* do objeto JSON. 
+No caso da cidade, o campo `name` é um *filho direto* do objeto JSON.
 A temperatura, o campo `temp` é um filho de `main`, que é filho direto do
 objeto JSON. Por último, o `id` está em um objeto, que está dentro de uma
-lista (note que `weather` tem um `[]` como filho direto, de modo que 
+lista (note que `weather` tem um `[]` como filho direto, de modo que
 seria possível ter mais de uma condição de tempo - aqui estamos ignorando essa possibilidade).
 Como queremos a primeira condição de tempo (sempre), precisamos acessá-la pelo
 primeiro índice da lista, ou seja, `0`.
@@ -346,7 +346,7 @@ uma *API Key* no [Open Weather Map](https://openweathermap.org).
 Para obter a chave, primeiro inscreva-se clicando [aqui](https://home.openweathermap.org/users/sign_up).
 
 Após inscrever-se e habilitar sua conta, na [página do seu profile](https://home.openweathermap.org/)
-você encontrará o link [API keys](https://home.openweathermap.org/api_keys). Ali você 
+você encontrará o link [API keys](https://home.openweathermap.org/api_keys). Ali você
 poderá gerar uma chave para sua aplicação. Usaremos esse valor no passo a seguir.
 
 De posse da API Key, dentro da classe `_LoadingScreenState` crie dois *atributos*:
@@ -373,7 +373,7 @@ método. `getLocation` deverá ficar assim:
 ```
 
 Em `getData`, vamos agora utilizar nossa URL customizada. No início do arquivo `loading_screen.dart`,
-logo após os as linhas `import`, crie uma *constante* com sua API key: 
+logo após os as linhas `import`, crie uma *constante* com sua API key:
 
 `const apiKey = 'coloque aqui sua api key gerada no passo anterior';`
 
@@ -383,11 +383,11 @@ as variáveis `longitude`, `latitude` e `apiKey`. A linha ficará assim:
 `var url = Uri.parse('https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey&units=metric');`
 
 Pronto. Execute o código. Deverá funcionar, buscando a coordenada para qual o seu emulador está
-configurado. 
+configurado.
 
 ### Refatorando o código.
 
-Até aqui atingimos 70% do objetivo da aplicação: obtemos a localização via GPS, com base nos 
+Até aqui atingimos 70% do objetivo da aplicação: obtemos a localização via GPS, com base nos
 dados do GPS, obtemos a informação de clima. Falta usar essa informação para darmos uma resposta
 visual para o usuário.
 
@@ -439,7 +439,7 @@ class NetworkHelper {
 Note que aqui o tipo de retorno de `getData` é `Future`. Isso se faz
 necessário pois é um método assíncrono, ou seja, faz uma requisição em segundo plano
 e retornamos um valor `dynamic` (dinâmico). Experimente passar o mouse sobre
-`jsonDecode`. Você verá que ele retorna um valor `dynamic`. Isso signifoca que 
+`jsonDecode`. Você verá que ele retorna um valor `dynamic`. Isso signifoca que
 o tipo do valor só é determinado em tempo de execução. Se nosso método retornasse, por exemplo,
 uma `String`, ao invés de `Future getData() async`, a assinatura de nosso método
 poderia ser `Future<String> getData() async`.
@@ -454,8 +454,8 @@ ao invés de usarmos o `print`. Para mais detalhes, consulte [este link](https:/
 
 Por fim, em `loading_screen.dart`, faça as seguintes alterações:
 
-1. Faça com que o método `getData` inicialize uma instância de `NetworkHelper` 
-e obtenha os dados passando a url da api por parâmetro. Ele deve ficar assim:
+1. Faça com que o método `getData` inicialize uma instância de `NetworkHelper`
+   e obtenha os dados passando a url da api por parâmetro. Ele deve ficar assim:
 ```dart
 void getData() async {
     NetworkHelper networkHelper = NetworkHelper('https://api.openweathermap.org/'
@@ -483,8 +483,8 @@ para a `location_screen`.
 
 ### Fazendo a transição entre telas
 
-Antes de passarmos, efetivamente, os dados para a `location_screen`, precisamos fazer a 
-transição entre telas. Para isso, usamos o método `push` da classe `Navigator`. 
+Antes de passarmos, efetivamente, os dados para a `location_screen`, precisamos fazer a
+transição entre telas. Para isso, usamos o método `push` da classe `Navigator`.
 Esse método faz com que possamos transicionar entre a tela atual e a próxima, passando por parâmetro
 possíveis dados de estado e também uma *instância* da classe para a qual queremos transicionar.
 
@@ -500,8 +500,8 @@ Para fazer a transição, vamos criar o método `pushToLocationScreen`, dentro d
   }
 ```
 
-Note que chamamos `Navigator.push`, passando por parâmetro um `MaterialPageRoute`. 
-Aqui o que fazemos é indicar que queremos transicionar para uma página que é baseada 
+Note que chamamos `Navigator.push`, passando por parâmetro um `MaterialPageRoute`.
+Aqui o que fazemos é indicar que queremos transicionar para uma página que é baseada
 em um *Widget* do tipo *material*. O parâmetro é a página para onde queremos ir, no caso uma
 instância de `LocationScreen`.
 
@@ -526,7 +526,7 @@ Agora, em `loading_screen.dart`, faça a importação da biblioteca: `import 'pa
 
 No método `build`, vamos substituir o retorno do `Scaffold` por um widget de `spinner`.
 
-Aqui escolhi o *DoubleBounce*, mas você pode escolher outro, se quiser. 
+Aqui escolhi o *DoubleBounce*, mas você pode escolher outro, se quiser.
 
 ![DoubleBounce](https://raw.githubusercontent.com/ybq/AndroidSpinKit/master/art/DoubleBounce.gif)
 
@@ -546,7 +546,7 @@ Usando o *DoubleBounce*, o método `build` ficará assim:
   }
 ```
 
-Execute a aplicação novamente e veja o *spinner* sendo executado na transição entre a 
+Execute a aplicação novamente e veja o *spinner* sendo executado na transição entre a
 tela de carregamento e a tela com a informação de clima.
 
 ### Transmitindo os dados de clima obtidos para a tela de clima
@@ -564,8 +564,8 @@ Além disso, você deve incluir este atributo no construtor desta classe, que fi
 const LocationScreen({required this.locationWeather, Key? key}) : super(key: key);
 ```
 
-Com isso, podemos, a partir de agora, passar o json que foi convertido em `loading_screen` 
-para a `location_screen`. Para isso, alteraremos o método `pushToLocationScreen`, que agora 
+Com isso, podemos, a partir de agora, passar o json que foi convertido em `loading_screen`
+para a `location_screen`. Para isso, alteraremos o método `pushToLocationScreen`, que agora
 receberá os dados json e os transmitirá para a próxima tela:
 
 ```dart
@@ -588,14 +588,14 @@ de dentro da classe `_LocationScreenState` conseguimos acessar qualquer atributo
 `LocationScreen` através do objeto `widget`.
 
 Assim, dentro da classe `_LocationScreenState`, vamos criar um método `updateUI`. Vamos criar também
-quatro atributos, que conterão os dados que necessitamos para mostrar na tela 
+quatro atributos, que conterão os dados que necessitamos para mostrar na tela
 as informações do clima da cidade em questão.
 
 O método `updateUI` deve receber por parâmetro os dados de clima (`weatherData`) e
 deve atribuir os valores que necessitamos: temperatura, condição climática e cidade
-nos atributos de classe criados. 
+nos atributos de classe criados.
 
-Atributos para a classe `_LocationScreenState`: 
+Atributos para a classe `_LocationScreenState`:
 ```dart
   late int temperature;  // o valor, em inteiros, da temperatura
   late String weatherIcon;  // o ícone para a condição climática
@@ -634,14 +634,14 @@ No método `updateUI`, extraímos, como visto na seção anterior,
 os valores da condição climática, temperatura e nome da cidade.
 
 A partir da condição climática, buscamos o ícone, com o método `getWeatherIcon`.
-Convertemos também a temperatura para um valor inteiro, uma vez que o valor 
+Convertemos também a temperatura para um valor inteiro, uma vez que o valor
 que recebemos do payload `weatherData` é um double e as casas decimais, no nosso aplicativo,
 não nos interessam.
 
 Por fim, obtemos a mensagem de acordo com o valor da temperatura.
 
 Tudo isso está envolvido por um `setState`, pois toda vez que o valor for
-recebido/alterado, queremos que as variáveis fiquem marcadas como alteradas 
+recebido/alterado, queremos que as variáveis fiquem marcadas como alteradas
 e a tela seja atualizada.
 
 Agora, precisamos chamar o método `updateUI`. Ele deve ser chamado, inicialmente,
@@ -668,7 +668,7 @@ Até aqui, conseguimos trazer as informações de localização e tempo e mostr�
 gostaríamos de utilizar o botão com uma "seta", posicionado no canto superior esquerdo da tela.
 Este botão, no código como `Icons.near_me`, deveria atualizar nossa posição (caso tenhamos nos movido,
 por exemplo), buscando novas informações de tempo para a localização atual. Para podermos buscar
-os dados de localização e tempo, também na `location_screen`, devemos refatorar o código. Até aqui, 
+os dados de localização e tempo, também na `location_screen`, devemos refatorar o código. Até aqui,
 a busca de dados está na `loading_screen`, que é uma tela e não deveria conter esse tipo de lógica.
 
 Isso é um problema também, pois se tentarmos acessar esses dados de outras telas (como é o nosso caso, aqui)
@@ -703,7 +703,7 @@ Dentro da classe `WeatherModel`, crie um método `getLocationWeather()`, com o s
 Note que agregamos a busca da localização e dos dados de clima neste método. É um método assíncrono
 que retorna um objeto de tipo `dynamic`, pois é o nosso retorno de `NetworkHelper::getData()`.
 
-Aqui fizemos uma pequena alteração também na URL, para deixá-la um pouco menor. A parte "fixa" da url 
+Aqui fizemos uma pequena alteração também na URL, para deixá-la um pouco menor. A parte "fixa" da url
 foi parar numa constante, que precisamos declarar, bem como a api key, que também tem que ser declarada.
 Então, ainda no `weather.dart`, logo após as linhas de `import` acrescente:
 
@@ -712,7 +712,7 @@ const apiKey = 'sua_api_key';  // substitua essa string pela sua api key
 const openWeatherMapURL = 'https://api.openweathermap.org/data/2.5/weather';
 ```
 
-Agora, precisamos utilizar esse método na `loading_screen` e na `location_screen`. Na classe 
+Agora, precisamos utilizar esse método na `loading_screen` e na `location_screen`. Na classe
 `_LoadingScreenState`, remova o método de busca de dados de tempo e substitua por:
 ```dart
   void getData() async {
@@ -733,18 +733,18 @@ O `initState` ficará assim:
 ```
 
 Agora, no `_LocationScreenState`, procure o `TextButton` com o ícone `near_me`. Altere o `onPressed` desse botão
-para que fique assim: 
+para que fique assim:
 ```dart
 onPressed: () async {
   var weatherData = await weather.getLocationWeather();
   updateUI(weatherData);
 },
 ```
-Note aqui que a função foi marcada como assíncrona, pois ela deve aguardar o térnimo da execução de `getLocationWeather` 
+Note aqui que a função foi marcada como assíncrona, pois ela deve aguardar o térnimo da execução de `getLocationWeather`
 para então chamar `updateUI`. Aqui o que fazemos é: ao pressionar o botão de localização (canto superior esquerdo da tela),
 atualizamos a localização do GPS e mostramos a nova informação de clima.
 
-Se você estiver testando o programa no seu celular, isso vai funcionar sem problemas. Porém, se estiver testando o programa 
+Se você estiver testando o programa no seu celular, isso vai funcionar sem problemas. Porém, se estiver testando o programa
 no emulador, não. Para emular corretamente esse comportamento, abra as configurações do emulador (na janela de emulação, os "três pontinhos" no canto superior direito).
 Escolha a aba *Location* ou *Localização*, se estiver em português. Ali, você pode escolher qualquer lugar do mapa e apertar o botão *Set Location*.
 Depois, volte ao emulador. Saia do programa (botão redondo do android) e vá para o google maps. Clique no botão de ajustar a localização atual. Agora volte para

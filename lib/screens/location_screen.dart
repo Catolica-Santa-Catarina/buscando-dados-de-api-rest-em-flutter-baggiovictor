@@ -4,18 +4,17 @@ import 'package:tempo_template/utilities/constants.dart';
 
 class LocationScreen extends StatefulWidget {
   final dynamic localWeatherData;
-
-  const LocationScreen({ this.localWeatherData, Key? key}) : super(key: key);
+  const LocationScreen({ required this.localWeatherData, Key? key}) : super(key: key);
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  late int temperature;  // o valor, em inteiros, da temperatura
-  late String weatherIcon;  // o ícone para a condição climática
-  late String cityName;  // o nome da cidade
-  late String message;  // Frase para o usuário, de acordo com a temperatura
+  late int temperature;
+  late String weatherIcon;
+  late String cityName;
+  late String message;
 
   WeatherModel weather = WeatherModel();
 
@@ -28,6 +27,12 @@ class _LocationScreenState extends State<LocationScreen> {
       message = weather.getMessage(temperature);
       cityName = weatherData['name'];
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    updateUI(widget.localWeatherData);
   }
 
   @override
@@ -52,7 +57,10 @@ class _LocationScreenState extends State<LocationScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      var weatherData = await weather.getLocationWeather();
+                      updateUI(weatherData);
+                    },
                     child: const Icon(
                       Icons.near_me,
                       size: 50.0,
@@ -70,22 +78,22 @@ class _LocationScreenState extends State<LocationScreen> {
               Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: Row(
-                  children: const [
+                  children: [
                     Text(
-                      '32°',
+                      '$temperature°',
                       style: kTempTextStyle,
                     ),
                     Text(
-                      '☀️',
+                      '$weatherIcon️',
                       style: kConditionTextStyle,
                     )
                   ],
                 ),
               ),
-              const Padding(
+              Padding(
                 padding: EdgeInsets.only(right: 15.0),
                 child: Text(
-                  'É tempo de 🍦 em Joinville!',
+                  '$message em $cityName!',
                   textAlign: TextAlign.right,
                   style: kMessageTextStyle,
                 ),

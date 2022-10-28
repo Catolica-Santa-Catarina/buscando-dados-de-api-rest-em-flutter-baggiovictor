@@ -1,19 +1,8 @@
 import 'package:geolocator/geolocator.dart';
 
-class LocationClass {
-  late double latitude = 0;
-  late double longitude = 0;
-
-  Future<void> getCurrentLocation() async {
-    await checkLocationPermission();
-
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.low);
-    latitude = position.latitude;
-    longitude = position.longitude;
-    print(latitude);
-    print(longitude);
-  }
+class Location {
+  double? longitude;
+  double? latitude;
 
   Future<void> checkLocationPermission() async {
     bool serviceEnabled;
@@ -37,5 +26,14 @@ class LocationClass {
       return Future.error(
           'A permissão para acesso a localização foi negada para sempre. Não é possível pedir permissão.');
     }
+  }
+
+  Future<void> getCurrentLocation() async {
+    await checkLocationPermission();
+
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low);
+    latitude = position.latitude;
+    longitude = position.longitude;
   }
 }
